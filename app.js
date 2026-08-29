@@ -11,6 +11,59 @@ const whatsappUrl = (phone='') => {
   const text = encodeURIComponent('Olá! Vim pelo site da SBAtletismo e gostaria de mais informações.');
   return `https://wa.me/${n}?text=${text}`;
 };
+
+function setupHeroCarousel(images=[]){
+  const card=document.querySelector('#hero-logo-card');
+  if(!card)return;
+  const items=images.map(goodUrl).filter(Boolean).slice(0,10);
+  if(!items.length)return;
+
+  card.innerHTML=`<div class="hero-carousel" aria-label="Fotos em destaque da SBAtletismo">
+    <div class="hero-slides">
+      ${items.map((url,i)=>`<img class="hero-slide ${i===0?'active':''}" src="${esc(url)}" alt="Foto em destaque ${i+1} da SBAtletismo" ${i===0?'fetchpriority="high"':'loading="lazy"'}>`).join('')}
+    </div>
+    ${items.length>1?`<button class="hero-arrow hero-prev" type="button" aria-label="Foto anterior">‹</button>
+    <button class="hero-arrow hero-next" type="button" aria-label="Próxima foto">›</button>
+    <div class="hero-dots" aria-label="Escolher foto">
+      ${items.map((_,i)=>`<button type="button" class="${i===0?'active':''}" data-hero-dot="${i}" aria-label="Ir para foto ${i+1}"></button>`).join('')}
+    </div>`:''}
+  </div>`;
+
+  if(items.length===1)return;
+
+  const slides=[...card.querySelectorAll('.hero-slide')];
+  const dots=[...card.querySelectorAll('[data-hero-dot]')];
+  let index=0,timer=null,touchX=null;
+
+  const show=(next)=>{
+    index=(next+slides.length)%slides.length;
+    slides.forEach((el,i)=>el.classList.toggle('active',i===index));
+    dots.forEach((el,i)=>el.classList.toggle('active',i===index));
+  };
+  const stop=()=>{if(timer){clearInterval(timer);timer=null}};
+  const start=()=>{stop();timer=setInterval(()=>show(index+1),6000)};
+
+  card.querySelector('.hero-prev')?.addEventListener('click',()=>{show(index-1);start()});
+  card.querySelector('.hero-next')?.addEventListener('click',()=>{show(index+1);start()});
+  dots.forEach((dot,i)=>dot.addEventListener('click',()=>{show(i);start()}));
+
+  card.addEventListener('pointerenter',stop);
+  card.addEventListener('pointerleave',start);
+  card.addEventListener('focusin',stop);
+  card.addEventListener('focusout',start);
+  card.addEventListener('touchstart',e=>{touchX=e.changedTouches?.[0]?.clientX??null},{passive:true});
+  card.addEventListener('touchend',e=>{
+    if(touchX===null)return;
+    const end=e.changedTouches?.[0]?.clientX??touchX;
+    const delta=end-touchX;
+    if(Math.abs(delta)>45)show(index+(delta<0?1:-1));
+    touchX=null;
+    start();
+  },{passive:true});
+
+  start();
+}
+
 const categoryLabels = {
   institucional:'Institucional / Estatuto',
   parcerias:'Parcerias e Termos de Fomento',
@@ -94,7 +147,10 @@ async function load(){
         if(handle) document.querySelector('#contact-social').textContent=`@${handle}`;
       }
     }
-    const hero=goodUrl(s.hero_image_url);if(hero)document.querySelector('#hero-logo-card').innerHTML=`<img src="${esc(hero)}" alt="Imagem de destaque da SBAtletismo">`;
+    const heroImages=Array.isArray(s.hero_images)?s.hero_images.map(goodUrl).filter(Boolean):[];
+    const legacyHero=goodUrl(s.hero_image_url);
+    if(!heroImages.length&&legacyHero)heroImages.push(legacyHero);
+    setupHeroCarousel(heroImages);
   }
 
   const pg=document.querySelector('#projects-grid');

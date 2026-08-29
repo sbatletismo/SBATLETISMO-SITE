@@ -60,11 +60,104 @@ function shell(content,title='Painel administrativo'){app.innerHTML=`<div class=
 function bindShell(){document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',async()=>{clearNotice();state.view=b.dataset.view;state.edit=null;await loadView()}));document.querySelector('#logout')?.addEventListener('click',async()=>{await sb.auth.signOut();state.session=null;renderLogin()})}
 async function loadCounts(){const keys=Object.entries(defs);const res=await Promise.all(keys.map(([,d])=>sb.from(d.table).select('*',{count:'exact',head:true})));state.counts=Object.fromEntries(keys.map(([k],i)=>[k,res[i].count||0]))}
 async function renderDashboard(){await loadCounts();shell(`<section class="admin-hero"><small>CONTEÚDO DO SITE</small><h1>Bem-vindo ao painel da SBAtletismo.</h1><p>Publique e atualize o site sem precisar editar código. As alterações salvas aqui ficam disponíveis no site público conforme o status de publicação.</p></section><div class="quick-grid"><div class="quick-card"><strong>${state.counts.news||0}</strong><span>Notícias</span></div><div class="quick-card"><strong>${state.counts.projects||0}</strong><span>Projetos</span></div><div class="quick-card"><strong>${state.counts.athletes||0}</strong><span>Atletas</span></div><div class="quick-card"><strong>${state.counts.documents||0}</strong><span>Documentos públicos</span></div></div><section class="panel"><div class="panel-head"><div><h3>Atalhos</h3><p>Comece pelas áreas mais usadas.</p></div></div><div class="quick-grid"><button class="quick-card" data-jump="news" style="text-align:left;border:1px solid #e3e8f0"><strong>＋</strong><span>Publicar notícia</span></button><button class="quick-card" data-jump="gallery" style="text-align:left;border:1px solid #e3e8f0"><strong>＋</strong><span>Adicionar foto</span></button><button class="quick-card" data-jump="documents" style="text-align:left;border:1px solid #e3e8f0"><strong>＋</strong><span>Enviar documento público</span></button><button class="quick-card" data-jump="settings" style="text-align:left;border:1px solid #e3e8f0"><strong>⚙</strong><span>Dados do site</span></button></div></section>`,'Visão geral');document.querySelectorAll('[data-jump]').forEach(b=>b.addEventListener('click',async()=>{state.view=b.dataset.jump;state.edit=null;await loadView()}))}
-async function renderSettings(){const {data,error}=await sb.from('site_settings').select('*').eq('id',1).single();if(error){state.err=error.message;shell('','Configurações');return}state.settings=data;const f=data||{};shell(`<section class="panel"><div class="panel-head"><div><h3>Dados gerais do site</h3><p>Textos e contatos principais.</p></div></div><form id="settings-form"><div class="form-grid">${input('organization_name','Nome da associação',f.organization_name)}${input('tagline','Slogan',f.tagline)}${input('hero_title','Título principal',f.hero_title)}${input('hero_subtitle','Texto principal',f.hero_subtitle,'textarea','full')}${input('about_text','Sobre a associação',f.about_text,'textarea','full')}${input('logo_url','Logo da associação (URL)',f.logo_url,'url')}${filePicker('logo_upload','Enviar novo logo')}${input('hero_image_url','Imagem principal (URL)',f.hero_image_url,'url')}${filePicker('hero_upload','Enviar nova imagem principal')}${input('contact_email','E-mail',f.contact_email,'email')}${input('contact_phone','Telefone / WhatsApp',f.contact_phone)}${input('address','Endereço',f.address,'textarea','full')}${input('instagram_url','Instagram',f.instagram_url,'url')}${input('facebook_url','Facebook',f.facebook_url,'url')}${input('youtube_url','YouTube',f.youtube_url,'url')}${input('registration_url','Link de inscrição',f.registration_url,'url')}</div><div class="form-actions"><button class="btn-admin" type="submit">Salvar alterações</button></div></form></section>`,'Configurações');document.querySelector('#settings-form').addEventListener('submit',saveSettings)}
+async function renderSettings(){
+  const {data,error}=await sb.from('site_settings').select('*').eq('id',1).single();
+  if(error){state.err=error.message;shell('','Configurações');return}
+  state.settings=data;
+  const f=data||{};
+  let heroImages=Array.isArray(f.hero_images)?f.hero_images.filter(Boolean):[];
+  if(!heroImages.length&&f.hero_image_url)heroImages=[f.hero_image_url];
+  heroImages=heroImages.slice(0,10);
+
+  const heroManager=`<div class="full hero-admin-manager">
+    <div class="hero-admin-title">
+      <div>
+        <strong>Fotos do destaque</strong>
+        <small>Adicione até 10 fotos. Elas aparecerão em carrossel na página inicial.</small>
+      </div>
+      <span>${heroImages.length}/10 fotos</span>
+    </div>
+    ${heroImages.length?`<div class="hero-admin-grid">${heroImages.map((url,i)=>`<label class="hero-admin-item">
+      <img src="${esc(url)}" alt="Foto ${i+1}">
+      <b>Foto ${i+1}</b>
+      <span><input type="checkbox" name="hero_remove" value="${esc(url)}"> Remover</span>
+    </label>`).join('')}</div>`:`<div class="notice info">Nenhuma foto de destaque cadastrada ainda.</div>`}
+    <label class="field full">
+      <span>ADICIONAR FOTOS AO CARROSSEL</span>
+      <div class="upload-box">
+        <input name="hero_gallery_upload" type="file" accept="image/*" multiple>
+        <small>Você pode selecionar várias fotos de uma vez. Limite total: 10 imagens.</small>
+      </div>
+    </label>
+  </div>`;
+
+  shell(`<section class="panel"><div class="panel-head"><div><h3>Dados gerais do site</h3><p>Textos, identidade visual e contatos principais.</p></div></div>
+  <form id="settings-form"><div class="form-grid">
+    ${input('organization_name','Nome da associação',f.organization_name)}
+    ${input('tagline','Slogan',f.tagline)}
+    ${input('hero_title','Título principal',f.hero_title)}
+    ${input('hero_subtitle','Texto principal',f.hero_subtitle,'textarea','full')}
+    ${heroManager}
+    ${input('about_text','Sobre a associação',f.about_text,'textarea','full')}
+    ${input('logo_url','Logo da associação (URL)',f.logo_url,'url')}
+    ${filePicker('logo_upload','Enviar novo logo')}
+    ${input('contact_email','E-mail',f.contact_email,'email')}
+    ${input('contact_phone','Telefone / WhatsApp',f.contact_phone)}
+    ${input('address','Endereço',f.address,'textarea','full')}
+    ${input('instagram_url','Instagram',f.instagram_url,'url')}
+    ${input('facebook_url','Facebook',f.facebook_url,'url')}
+    ${input('youtube_url','YouTube',f.youtube_url,'url')}
+    ${input('registration_url','Link de inscrição',f.registration_url,'url')}
+  </div><div class="form-actions"><button class="btn-admin" type="submit">Salvar alterações</button></div></form></section>`,'Configurações');
+  document.querySelector('#settings-form').addEventListener('submit',saveSettings);
+}
 function input(name,label,value='',type='text',extra=''){if(type==='textarea')return `<label class="field ${extra}"><span>${esc(label)}</span><textarea class="textarea" name="${name}">${esc(value||'')}</textarea></label>`;return `<label class="field ${extra}"><span>${esc(label)}</span><input class="input" name="${name}" type="${type}" value="${esc(value||'')}"></label>`}
 function filePicker(name,label,accept='image/*'){return `<label class="field"><span>${esc(label)}</span><div class="upload-box"><input name="${name}" type="file" accept="${accept}"><small>O arquivo será enviado para o armazenamento da SBAtletismo.</small></div></label>`}
 async function upload(file,bucket,folder){if(!file||!file.size)return'';const safe=file.name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-zA-Z0-9._-]/g,'-');const path=`${folder}/${Date.now()}-${crypto.randomUUID()}-${safe}`;const {error}=await sb.storage.from(bucket).upload(path,file,{contentType:file.type||undefined,upsert:false});if(error)throw error;return sb.storage.from(bucket).getPublicUrl(path).data.publicUrl}
-async function saveSettings(e){e.preventDefault();clearNotice();try{const fd=new FormData(e.currentTarget),payload={};['organization_name','tagline','hero_title','hero_subtitle','about_text','logo_url','hero_image_url','contact_email','contact_phone','address','instagram_url','facebook_url','youtube_url','registration_url'].forEach(k=>payload[k]=String(fd.get(k)||'').trim()||null);const logoFile=fd.get('logo_upload');if(logoFile?.size)payload.logo_url=await upload(logoFile,'site-media','branding');const file=fd.get('hero_upload');if(file?.size)payload.hero_image_url=await upload(file,'site-media','settings');const {error}=await sb.from('site_settings').update(payload).eq('id',1);if(error)throw error;state.msg='Configurações salvas.';await renderSettings()}catch(err){state.err=err.message||String(err);await renderSettings()}}
+async function saveSettings(e){
+  e.preventDefault();
+  clearNotice();
+  const submit=e.currentTarget.querySelector('button[type="submit"]');
+  const oldText=submit?.textContent||'Salvar alterações';
+  if(submit){submit.disabled=true;submit.textContent='Salvando...'}
+  try{
+    const fd=new FormData(e.currentTarget),payload={};
+    ['organization_name','tagline','hero_title','hero_subtitle','about_text','logo_url','contact_email','contact_phone','address','instagram_url','facebook_url','youtube_url','registration_url']
+      .forEach(k=>payload[k]=String(fd.get(k)||'').trim()||null);
+
+    const logoFile=fd.get('logo_upload');
+    if(logoFile?.size)payload.logo_url=await upload(logoFile,'site-media','branding');
+
+    let heroImages=Array.isArray(state.settings?.hero_images)?state.settings.hero_images.filter(Boolean):[];
+    if(!heroImages.length&&state.settings?.hero_image_url)heroImages=[state.settings.hero_image_url];
+
+    const remove=new Set(fd.getAll('hero_remove').map(String));
+    heroImages=heroImages.filter(url=>!remove.has(url));
+
+    const newFiles=fd.getAll('hero_gallery_upload').filter(file=>file&&file.size);
+    if(heroImages.length+newFiles.length>10){
+      throw new Error(`O destaque aceita no máximo 10 fotos. Você já manterá ${heroImages.length} e selecionou ${newFiles.length}.`);
+    }
+
+    for(const file of newFiles){
+      const url=await upload(file,'site-media','hero-carousel');
+      if(url)heroImages.push(url);
+    }
+
+    payload.hero_images=heroImages.slice(0,10);
+    payload.hero_image_url=payload.hero_images[0]||null;
+
+    const {error}=await sb.from('site_settings').update(payload).eq('id',1);
+    if(error)throw error;
+    state.msg='Configurações salvas. O carrossel da página inicial foi atualizado.';
+    await renderSettings();
+  }catch(err){
+    state.err=err.message||String(err);
+    await renderSettings();
+  }finally{
+    if(submit){submit.disabled=false;submit.textContent=oldText}
+  }
+}
 function fieldHtml(field,row){const [name,label,type,opts]=field;const val=row?.[name]??defaults[state.view]?.[name]??'';const req=opts===true?'required':'';if(type==='textarea')return `<label class="field full"><span>${esc(label)}</span><textarea class="textarea" name="${name}" ${req}>${esc(val)}</textarea></label>`;if(type==='select'){return `<label class="field"><span>${esc(label)}</span><select class="select" name="${name}">${opts.map(o=>{const pair=Array.isArray(o)?o:[o,o];const value=String(pair[0]),text=String(pair[1]);return `<option value="${esc(value)}" ${String(val)===value?'selected':''}>${esc(text)}</option>`}).join('')}</select></label>`}if(type==='checkbox')return `<label class="field"><span>${esc(label)}</span><label style="display:flex;align-items:center;gap:8px;padding:11px 0"><input name="${name}" type="checkbox" ${val?'checked':''}> Sim</label></label>`;if(type==='image')return `<label class="field"><span>${esc(label)}</span><div class="upload-box">${val?`<img src="${esc(val)}" alt="" class="thumb" style="margin-bottom:8px">`:''}<input name="${name}" type="file" accept="image/*"><small>JPG, PNG ou WebP. ${val?'A imagem atual será mantida se você não selecionar outra.':''}</small></div></label>`;if(type==='file')return `<label class="field"><span>${esc(label)}</span><div class="upload-box">${val?`<a href="${esc(val)}" target="_blank" style="color:#2c3091;font-weight:800">Arquivo atual ↗</a>`:''}<input name="${name}" type="file" accept="application/pdf,.pdf,.doc,.docx,.xls,.xlsx" ${!val&&opts===true?'required':''}><small>PDF recomendado para transparência.</small></div></label>`;let display=val;if(type==='datetime-local'&&val)display=String(val).slice(0,16);return `<label class="field"><span>${esc(label)}</span><input class="input" name="${name}" type="${type}" value="${esc(display)}" ${req}></label>`}
 function rowMeta(view,r){if(view==='news')return `${r.status} • ${fmt(r.published_at||r.created_at)}`;if(view==='events')return `${r.status} • ${fmt(r.event_date)}`;if(view==='documents')return `${documentCategoryLabels[r.category]||r.category||'Sem categoria'} • ${fmt(r.document_date)} • ${r.is_published?'visível no portal':'oculto do público'}`;if(view==='athletes')return `${r.category||''} ${r.specialty?'• '+r.specialty:''}`;if(view==='team')return r.role||'';if(view==='partners')return r.partner_type||'';if(view==='gallery')return `${r.event_name||''} ${r.event_date?'• '+fmt(r.event_date):''}`;return r.active===false?'inativo':'ativo'}
 function rowThumb(view,r){const k={news:'cover_image_url',projects:'image_url',events:'image_url',athletes:'photo_url',team:'photo_url',gallery:'image_url',partners:'logo_url'}[view];return k&&r[k]?`<img class="thumb" src="${esc(r[k])}" alt="">`:''}
