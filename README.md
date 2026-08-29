@@ -1,6 +1,6 @@
-# SB Atletismo — Site + Painel Administrativo
+# SBAtletismo — Site + Painel Administrativo
 
-Projeto estático preparado para Vercel e conectado ao Supabase da SB Atletismo.
+Projeto estático preparado para Vercel e conectado ao Supabase da SBAtletismo.
 
 ## Acessos
 - Site público: `/`
