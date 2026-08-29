@@ -63,6 +63,12 @@ async function load(){
 
   if(settings.data){
     const s=settings.data;
+    const siteLogo=goodUrl(s.logo_url);
+    if(siteLogo){
+      document.querySelectorAll('img[src$="logo-sbatletismo.svg"]').forEach(img=>{
+        img.src=siteLogo;
+      });
+    }
     if(s.hero_title)document.querySelector('#hero-title').textContent=s.hero_title;
     if(s.hero_subtitle)document.querySelector('#hero-subtitle').textContent=s.hero_subtitle;
     if(s.about_text)document.querySelector('#about-text').textContent=s.about_text;
