@@ -29,7 +29,11 @@ let scale=1; document.querySelector('#font-inc')?.addEventListener('click',()=>{
 document.querySelector('#year').textContent = new Date().getFullYear();
 
 function projectCard(p,i){return `<article class="project-card ${i===0?'featured':''}"><div class="project-number">${String(i+1).padStart(2,'0')}</div><div class="project-content"><span class="project-label">PROJETO</span><h3>${esc(p.title)}</h3><p>${esc(p.summary || p.body || '')}</p></div><div class="project-line"></div></article>`}
-function newsCard(n){const img=goodUrl(n.cover_image_url);return `<article class="news-card"><div class="news-visual" ${img?`style="background-image:linear-gradient(transparent,rgba(13,22,59,.45)),url('${esc(img)}')"`:''}><span>NOTÍCIA</span></div><div class="news-copy"><small>${esc(fmtDate(n.published_at || n.created_at))}</small><h3>${esc(n.title)}</h3><p>${esc(n.excerpt || '')}</p></div></article>`}
+function newsCard(n){
+  const img=goodUrl(n.cover_image_url);
+  const target=n.slug?`noticia?slug=${encodeURIComponent(n.slug)}`:`noticia?id=${encodeURIComponent(n.id)}`;
+  return `<a class="news-card" href="${esc(target)}" aria-label="Abrir notícia: ${esc(n.title)}"><div class="news-visual" ${img?`style="background-image:linear-gradient(transparent,rgba(13,22,59,.45)),url('${esc(img)}')"`:''}><span>NOTÍCIA</span></div><div class="news-copy"><small>${esc(fmtDate(n.published_at || n.created_at))}</small><h3>${esc(n.title)}</h3><p>${esc(n.excerpt || '')}</p><strong style="display:inline-block;margin-top:12px;color:#2c3091;font-size:.7rem">Ler notícia completa →</strong></div></a>`;
+}
 function eventCard(e){
   const img=goodUrl(e.image_url), reg=goodUrl(e.registration_url);
   return `<article class="event-card">${img?`<div class="event-visual" style="background-image:linear-gradient(transparent,rgba(10,18,55,.55)),url('${esc(img)}')"><span>EVENTO</span></div>`:''}<div class="event-body"><div class="event-date"><strong>${esc(fmtDate(e.event_date))}</strong>${e.location?`<span>${esc(e.location)}</span>`:''}</div><h3>${esc(e.title)}</h3>${e.description?`<p>${esc(e.description)}</p>`:''}${reg?`<a class="event-link" href="${esc(reg)}" target="_blank" rel="noopener">Informações / inscrição →</a>`:''}</div></article>`;
@@ -52,7 +56,7 @@ async function load(){
     supabase.from('projects').select('*').order('display_order').order('created_at',{ascending:false}).limit(6),
     supabase.from('events').select('*').order('event_date',{ascending:false,nullsFirst:false}).limit(12),
     supabase.from('gallery_items').select('*').order('display_order').order('created_at',{ascending:false}).limit(8),
-    supabase.from('news_posts').select('*').order('published_at',{ascending:false,nullsFirst:false}).order('created_at',{ascending:false}).limit(6),
+    supabase.from('news_posts').select('*').eq('status','published').order('published_at',{ascending:false,nullsFirst:false}).order('created_at',{ascending:false}).limit(6),
     supabase.from('partners').select('*').order('display_order').order('created_at',{ascending:false}).limit(10),
     supabase.from('documents').select('*').order('document_date',{ascending:false,nullsFirst:false}).order('created_at',{ascending:false}).limit(5),
     supabase.from('athletes').select('*',{count:'exact',head:true}),
