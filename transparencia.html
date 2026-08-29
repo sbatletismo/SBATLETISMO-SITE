@@ -1,3 +1,97 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#2c3091"><meta name="description" content="Portal da Transparência da SBAtletismo."><title>Transparência | SBAtletismo</title><link rel="icon" href="assets/logo-sbatletismo.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css"></head><body>
-<div class="utility-bar"><div class="container utility-inner"><span>Associação SBAtletismo</span><div class="utility-actions"><a href="index.html">Voltar ao site</a></div></div></div><header class="site-header"><div class="container header-inner"><a class="brand" href="index.html"><img src="assets/logo-sbatletismo.svg" alt="Logo SBAtletismo"><div class="brand-copy"><strong>SBATLETISMO</strong><span>Portal da Transparência</span></div></a><nav class="main-nav" style="display:flex"><a href="index.html">Início</a><a class="nav-highlight" href="transparencia.html">Transparência</a></nav></div></header>
-<main><section class="portal-hero"><div class="container"><div class="portal-breadcrumb"><a href="index.html">Início</a> / Transparência</div><span class="kicker light">ACESSO À INFORMAÇÃO</span><h1>Portal da Transparência</h1><p>Consulte documentos institucionais, parcerias, planos de trabalho, prestações de contas, relatórios, editais e demonstrativos publicados pela SBAtletismo.</p></div></section><section class="portal-shell"><div class="container"><div class="portal-controls"><div class="portal-field"><label for="search-doc">BUSCAR DOCUMENTO</label><input id="search-doc" type="search" placeholder="Digite o nome do documento..."></div><div class="portal-field"><label for="portal-year">EXERCÍCIO</label><select id="portal-year"><option value="all">Todos</option></select></div><div class="portal-field"><label for="portal-kind">TIPO</label><select id="portal-kind"><option value="all">Todos os documentos</option><option value="institucional">Institucional / Estatuto</option><option value="emendas">Parcerias e Termos de Fomento</option><option value="planos">Planos de Trabalho</option><option value="contas">Prestação de Contas</option><option value="relatorios">Relatórios de Atividades</option><option value="balancos">Financeiro, Balanços e Certidões</option><option value="editais">Editais e Chamamentos</option><option value="outros">Outros documentos</option></select></div></div><div class="portal-grid"><aside class="portal-sidebar"><h2>Categorias</h2><button class="category-button active" data-category="all">Todos <b id="count-all">0</b></button><button class="category-button" data-category="institucional">Institucional / Estatuto <b>0</b></button><button class="category-button" data-category="emendas">Parcerias e Termos de Fomento <b>0</b></button><button class="category-button" data-category="planos">Planos de Trabalho <b>0</b></button><button class="category-button" data-category="contas">Prestação de Contas <b>0</b></button><button class="category-button" data-category="relatorios">Relatórios de Atividades <b>0</b></button><button class="category-button" data-category="balancos">Financeiro, Balanços e Certidões <b>0</b></button><button class="category-button" data-category="editais">Editais e Chamamentos <b>0</b></button><button class="category-button" data-category="outros">Outros documentos <b>0</b></button></aside><section class="portal-content"><div class="portal-content-head"><div><h2 id="result-title">Documentos publicados</h2><p id="result-subtitle">Consulta pública da SBAtletismo.</p></div><span class="status-chip status-ok">Portal atualizado pelo painel</span></div><div style="overflow:auto"><table class="document-table"><thead><tr><th>DOCUMENTO</th><th>CATEGORIA</th><th>DATA</th><th>ARQUIVO</th></tr></thead><tbody id="document-body"></tbody></table><div class="empty hidden" id="empty-state">Nenhum documento encontrado com esses filtros.</div></div></section></div><div class="portal-info"><article><small>01</small><h3>Organização por exercício</h3><p>Filtre os documentos pela data oficial informada pela associação.</p></article><article><small>02</small><h3>Recursos públicos</h3><p>Parcerias, termos de fomento, planos de trabalho e prestações de contas em um único lugar.</p></article><article><small>03</small><h3>Arquivos digitais</h3><p>Abra os documentos publicados diretamente pelo navegador.</p></article></div></div></section></main><footer class="site-footer"><div class="container footer-bottom" style="margin-top:0"><span>© <span id="portal-footer-year"></span> SBAtletismo.</span><span>Portal da Transparência</span></div></footer><script type="module" src="transparencia.js"></script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#2c3091" />
+  <meta name="description" content="Portal da Transparência da SB Atletismo." />
+  <title>Transparência | SB Atletismo</title>
+  <link rel="icon" href="assets/logo-sbatletismo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .portal-hero{background:linear-gradient(135deg,#171b61,#2c3091 50%,#0878b8);color:#fff;padding:70px 0 86px;position:relative;overflow:hidden}
+    .portal-hero:after{content:"";position:absolute;width:560px;height:260px;border:30px solid rgba(255,255,255,.08);border-radius:50%;right:-160px;bottom:-150px;transform:rotate(-18deg)}
+    .portal-breadcrumb{font-size:.72rem;color:#b9c8e7;margin-bottom:24px}.portal-breadcrumb a{color:#fff;font-weight:700}
+    .portal-hero h1{font-family:Manrope,sans-serif;font-size:clamp(2.8rem,5vw,5.1rem);line-height:1;letter-spacing:-.055em;margin:0;max-width:820px}.portal-hero p{max-width:700px;color:#d8def0;margin:22px 0 0}
+    .portal-shell{padding:56px 0 92px;background:#f5f8fb}
+    .portal-controls{display:grid;grid-template-columns:1.5fr .7fr .9fr;gap:12px;background:#fff;border:1px solid #e1e7ef;border-radius:20px;padding:14px;position:relative;margin-top:-90px;z-index:3;box-shadow:0 22px 60px rgba(19,30,74,.12)}
+    .portal-field{display:flex;flex-direction:column;gap:6px}.portal-field label{font-size:.63rem;letter-spacing:.12em;font-weight:800;color:#6f7788}.portal-field input,.portal-field select{min-height:48px;border:1px solid #dfe5ed;border-radius:12px;padding:0 14px;color:#11172a;background:#fff;outline:none}.portal-field input:focus,.portal-field select:focus{border-color:#0595d9;box-shadow:0 0 0 3px rgba(5,149,217,.12)}
+    .portal-grid{display:grid;grid-template-columns:290px 1fr;gap:22px;margin-top:28px}.portal-sidebar,.portal-content{background:#fff;border:1px solid #e1e7ef;border-radius:22px}
+    .portal-sidebar{padding:18px}.portal-sidebar h2{font-family:Manrope,sans-serif;font-size:1rem;margin:3px 6px 14px}.category-button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;border:0;border-radius:12px;background:transparent;color:#374052;padding:12px;text-align:left;font-size:.77rem;font-weight:700}.category-button:hover,.category-button.active{background:#eef5fb;color:#2c3091}.category-button b{min-width:26px;height:26px;border-radius:9px;background:#f0f3f7;display:grid;place-items:center;font-size:.65rem}.category-button.active b{background:#2c3091;color:#fff}
+    .portal-content{overflow:hidden}.portal-content-head{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:24px;border-bottom:1px solid #e7ebf1}.portal-content-head h2{font-family:Manrope,sans-serif;margin:0;font-size:1.28rem}.portal-content-head p{margin:4px 0 0;color:#7c8494;font-size:.76rem}.status-chip{font-size:.65rem;font-weight:800;color:#087b46;background:#ebf9f2;border:1px solid #ccefdc;border-radius:999px;padding:7px 10px;white-space:nowrap}
+    .document-table{width:100%;border-collapse:collapse}.document-table th,.document-table td{text-align:left;padding:15px 24px;border-bottom:1px solid #edf0f4;font-size:.76rem}.document-table th{font-size:.62rem;letter-spacing:.1em;color:#7d8493;background:#fafbfd}.document-table td:last-child{text-align:right}.empty-state{padding:70px 26px;text-align:center}.empty-icon{width:58px;height:58px;border-radius:18px;background:#eef5fb;color:#2c3091;display:grid;place-items:center;margin:0 auto 16px;font-size:1.4rem}.empty-state h3{font-family:Manrope,sans-serif;margin:0 0 8px}.empty-state p{color:#7d8493;max-width:520px;margin:0 auto;font-size:.82rem}.portal-info{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin-top:24px}.portal-info article{background:#fff;border:1px solid #e1e7ef;border-radius:18px;padding:20px}.portal-info small{color:#0595d9;font-weight:800;letter-spacing:.12em;font-size:.6rem}.portal-info h3{font-family:Manrope,sans-serif;font-size:.95rem;margin:7px 0}.portal-info p{font-size:.76rem;color:#747c8d;margin:0}
+    @media(max-width:900px){.portal-controls{grid-template-columns:1fr}.portal-grid{grid-template-columns:1fr}.portal-info{grid-template-columns:1fr}.portal-content-head{align-items:flex-start;flex-direction:column}.document-table th:nth-child(3),.document-table td:nth-child(3){display:none}}
+  </style>
+</head>
+<body>
+  <div class="utility-bar"><div class="container utility-inner"><span>Associação SB Atletismo</span><div class="utility-actions"><a href="index.html">Voltar ao site</a></div></div></div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html"><img src="assets/logo-sbatletismo.png" alt="Logo SB Atletismo"><div class="brand-copy"><strong>SB ATLETISMO</strong><span>Portal da Transparência</span></div></a>
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+      <nav class="main-nav" id="main-nav"><a href="index.html">Início</a><a href="index.html#associacao">A Associação</a><a href="index.html#projetos">Projetos</a><a class="nav-highlight" href="transparencia.html">Transparência</a><a href="index.html#contato">Contato</a></nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="portal-hero">
+      <div class="container">
+        <div class="portal-breadcrumb"><a href="index.html">Início</a> &nbsp;/&nbsp; Transparência</div>
+        <span class="kicker light">ACESSO À INFORMAÇÃO</span>
+        <h1>Portal da Transparência</h1>
+        <p>Consulte, por exercício e categoria, os documentos institucionais, instrumentos de parceria, planos de trabalho, relatórios e prestações de contas da SB Atletismo.</p>
+      </div>
+    </section>
+
+    <section class="portal-shell">
+      <div class="container">
+        <div class="portal-controls">
+          <div class="portal-field"><label for="search-doc">BUSCAR DOCUMENTO</label><input id="search-doc" type="search" placeholder="Digite o nome do documento, projeto ou termo..."></div>
+          <div class="portal-field"><label for="portal-year">EXERCÍCIO</label><select id="portal-year"><option>2026</option><option>2025</option><option>2024</option></select></div>
+          <div class="portal-field"><label for="portal-kind">TIPO</label><select id="portal-kind"><option value="all">Todos os documentos</option><option value="institucional">Institucional</option><option value="emendas">Emendas e termos</option><option value="planos">Planos de trabalho</option><option value="contas">Prestação de contas</option><option value="relatorios">Relatórios</option><option value="balancos">Balanços e certidões</option></select></div>
+        </div>
+
+        <div class="portal-grid">
+          <aside class="portal-sidebar">
+            <h2>Categorias</h2>
+            <button class="category-button active" data-category="all">Todos os documentos <b>0</b></button>
+            <button class="category-button" data-category="institucional">Institucional <b>0</b></button>
+            <button class="category-button" data-category="emendas">Emendas e termos <b>0</b></button>
+            <button class="category-button" data-category="planos">Planos de trabalho <b>0</b></button>
+            <button class="category-button" data-category="contas">Prestação de contas <b>0</b></button>
+            <button class="category-button" data-category="relatorios">Relatórios de atividades <b>0</b></button>
+            <button class="category-button" data-category="balancos">Balanços e certidões <b>0</b></button>
+          </aside>
+
+          <section class="portal-content" aria-live="polite">
+            <div class="portal-content-head"><div><h2 id="result-title">Documentos de 2026</h2><p id="result-subtitle">Todos os documentos publicados no exercício selecionado.</p></div><span class="status-chip">Portal organizado por exercício</span></div>
+            <div id="document-results">
+              <table class="document-table" aria-label="Documentos de transparência">
+                <thead><tr><th>DOCUMENTO</th><th>CATEGORIA</th><th>PUBLICAÇÃO</th><th>ARQUIVO</th></tr></thead>
+                <tbody id="document-body"></tbody>
+              </table>
+              <div class="empty-state" id="empty-state">
+                <div class="empty-icon">≡</div>
+                <h3>Nenhum documento adicionado ainda</h3>
+                <p>A estrutura do portal está pronta. Assim que você enviar os PDFs oficiais, eles poderão ser organizados aqui por ano, categoria, data e projeto.</p>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <div class="portal-info">
+          <article><small>01</small><h3>Organização por exercício</h3><p>Cada ano terá sua própria relação de documentos, facilitando auditoria e consulta pública.</p></article>
+          <article><small>02</small><h3>Recursos públicos</h3><p>Emendas, termos, planos de trabalho e prestações de contas poderão ser reunidos em uma única área.</p></article>
+          <article><small>03</small><h3>Documentos em PDF</h3><p>Os arquivos poderão ser abertos ou baixados diretamente pelo cidadão quando forem publicados.</p></article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="container footer-bottom" style="margin-top:0"><span>© <span id="portal-footer-year"></span> SB Atletismo.</span><span>Portal da Transparência</span></div></footer>
+  <script src="transparencia.js"></script>
+</body>
+</html>
