@@ -1,1 +1,47 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#2c3091"><meta name="robots" content="noindex,nofollow"><title>Admin | SBAtletismo</title><link rel="icon" href="assets/logo-sbatletismo.svg"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="styles.css"></head><body class="admin-body"><div id="admin-app"></div><script type="module" src="admin.js"></script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#2c3091">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Admin | SBAtletismo</title>
+  <link rel="icon" href="assets/logo-sbatletismo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20260829-2">
+  <style>
+    #admin-fallback{min-height:100vh;display:grid;place-items:center;padding:24px;background:#f3f6fa;font-family:Arial,sans-serif}
+    #admin-fallback>div{max-width:560px;background:#fff;border:1px solid #e3e8f0;border-radius:18px;padding:24px;box-shadow:0 20px 55px rgba(20,30,70,.12)}
+    #admin-fallback h2{margin:0 0 8px;color:#2c3091}
+    #admin-fallback p{margin:0;color:#667085}
+  </style>
+</head>
+<body class="admin-body">
+  <div id="admin-app">
+    <div id="admin-fallback"><div><h2>Carregando painel...</h2><p>Aguarde alguns segundos.</p></div></div>
+  </div>
+
+  <script>
+    window.addEventListener('error', function(e){
+      const el=document.querySelector('#admin-app');
+      if(el && !el.querySelector('.login-shell') && !el.querySelector('.admin-shell')){
+        el.innerHTML='<div id="admin-fallback"><div><h2>Erro ao carregar o painel</h2><p>'+String(e.message || 'Falha no JavaScript')+'</p></div></div>';
+      }
+    });
+    window.addEventListener('unhandledrejection', function(e){
+      const el=document.querySelector('#admin-app');
+      if(el && !el.querySelector('.login-shell') && !el.querySelector('.admin-shell')){
+        el.innerHTML='<div id="admin-fallback"><div><h2>Erro ao iniciar o painel</h2><p>'+String((e.reason && e.reason.message) || e.reason || 'Falha inesperada')+'</p></div></div>';
+      }
+    });
+  </script>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+    onerror="this.onerror=null;this.src='https://unpkg.com/@supabase/supabase-js@2'">
+  </script>
+  <script src="admin-safe.js?v=20260829-2"></script>
+</body>
+</html>
